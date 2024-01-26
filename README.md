@@ -1,1 +1,1 @@
-![5ec9488835a572d3e8ee960e67fb1295](https://github.com/lankm/lankm/assets/42783356/d030abdd-0605-4581-823e-176112c4b7c0)
+![kirby](https://github.com/lankm/lankm/assets/42783356/4f67efdc-6e43-42db-afa1-5f7769f45a86)
