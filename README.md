@@ -1,1 +1,5 @@
-![kirby](https://github.com/lankm/lankm/assets/42783356/4f67efdc-6e43-42db-afa1-5f7769f45a86)
+# Landon Moon
+
+**Hello everyone!!** Most of my repositories are group projects from my education at UTA. I also have a couple personal projects as well.
+
+I love implementing and optimizing algorithms along with backend systems, but a good UI never hurt anyone.
