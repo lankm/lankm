@@ -24,17 +24,29 @@ void printBinary(unsigned long long num, int bits) {
 }
 
 int main(int argc, char **argv) {
-    double arr[1<<16];
-    double res;
+    clock_t start;
+    clock_t end;
+    const unsigned int LOOPS = (unsigned int)((uint64_t)1<<1)-1;
 
-    clock_t start = clock();
-
-    for(int i=0; i<10000000; i++) {
-        res = arr[1<<16];
+    int32_t u = 1<<30;
+    printBinary(u,32);
+    start = clock();
+    for(unsigned int i=0; i<LOOPS; i++) {
+        u = (int32_t)(( ((int64_t)u)*((int64_t)u))>>30);
     }
+    end = clock();
+    printf("final fixed: %d\n",u);
+    printf("clocks: %d\n",end-start);
 
-    clock_t end = clock();
-    printf("%d\n",end-start);
+    float f = 1.0;
+    printf("%d\n",u);
+    start = clock();
+    for(unsigned int i=0; i<LOOPS; i++) {
+        f=f*f;
+    }
+    end = clock();
+    printf("final float: %f\n",f);
+    printf("clocks: %d\n",end-start);
 
     return 0;
 }

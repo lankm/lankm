@@ -1,6 +1,7 @@
 #include <cstdint>
 #include <iostream>
 #include <cmath>
+#include <iomanip>
 
 #define BIT_ALIGN 30
 class Unit {
@@ -33,7 +34,7 @@ class Unit {
         // multiplication =====================================================
         Unit operator*(const Unit& other) const {
             // multiply then shift right
-            int64_t calc = ( (int64_t)val * (int64_t)other.val ) >> BIT_ALIGN;
+            int64_t calc = ( (int64_t)val * (int64_t)other.val) >> BIT_ALIGN;
             return Unit( (int32_t)calc );
         }
         // division ===========================================================
@@ -66,7 +67,6 @@ class Angle {
             double rem = fmod(theta, 2*3.1415926535897932384626);
             rem /= 2*3.1415926535897932384626;
             rem *= PI2;
-            printf("%d\n",(uint32_t)rem);
 
             ang = (uint32_t)rem;
         }
