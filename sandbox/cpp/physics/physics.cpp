@@ -26,13 +26,12 @@ class Translation {
             // calculate current position due to velocity
             TIME dt = now - this->time;
             for(int i = 0; i < DIMS; i++) {
-                p[i] += this->vel[i] * dt;
+                // static cast to preserve precision
+                p[i] += static_cast<int64_t>(this->vel[i]) * dt;
             }
 
             return p;
         }
-    
-    public:
         /* updates current position */
         void update(TIME now) {
             if(this->time != now) {
@@ -40,8 +39,13 @@ class Translation {
                 this->time = now;
             }
         }
+    public:
         /* applies an instant accelertion of dv */
-        void accelerate(VELOCITY dv) {
+        void accelerate(VELOCITY dv, TIME now) {
+            // update position before velocity changes
+            this->update(now);
+
+            // change velocity by dv
             for(int i = 0; i < DIMS; i++) {
                 this->vel[i] += dv[i];
             }
@@ -49,11 +53,11 @@ class Translation {
 
         /* returns difference in position in global coordinate frame */
         POSITION get_rel_pos(Translation& other, TIME now) {
-            // update position to current time
+            // update this's position to current time
             this->update(now);
             other.update(now);
 
-            // initialize with current position
+            // initialize with this's current position
             POSITION p;
             std::copy(std::begin(this->pos), std::end(this->pos), std::begin(p));
 
@@ -65,8 +69,8 @@ class Translation {
             return p;
         }
         /* returns difference in velocity in global coordinate frame */
-        VELOCITY get_rel_vel(Translation& other, TIME now) {
-            // initialize with velocity
+        VELOCITY get_rel_vel(Translation& other) {
+            // initialize with this's velocity
             VELOCITY v;
             std::copy(std::begin(this->vel), std::end(this->vel), std::begin(v));
 
@@ -85,6 +89,7 @@ class Translation {
             this->time = 0;
         }
 
+        // TODO make this better formatted
         friend std::ostream& operator<<(std::ostream& os, const Translation& obj) {
             for(auto &dim: obj.pos) {
                 os << dim << ' ';
@@ -114,6 +119,16 @@ class Rotation {
         void get_vel() {
 
         }
+};
+
+class Object {
+    /* 
+     * mass
+     * translation
+     * 
+     * x,y,z moment of inertia
+     * rotation
+     */
 };
 
 #endif
