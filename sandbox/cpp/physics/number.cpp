@@ -1,3 +1,6 @@
+#ifndef NUMBER_GUARD_H
+#define NUMBER_GUARD_H
+
 #include <cstdint>
 #include <iostream>
 #include <cmath>
@@ -84,3 +87,5 @@ class Quaternion {
     public:
 
 };
+
+#endif

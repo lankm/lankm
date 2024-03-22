@@ -1,21 +1,96 @@
+#ifndef PYSICS_GUARD_H
+#define PYSICS_GUARD_H
+
 #include <cstdint>
+#include <array>
+#include <algorithm>
 #include "number.cpp"
+
+#define DIMS 3
+#define POSITION std::array<int64_t,DIMS>
+#define VELOCITY std::array<int32_t,DIMS>
+#define TIME uint32_t
 
 class Translation {
     private:
-        int64_t pos[3];
-        int32_t vel[3];
-        uint32_t time;
+        POSITION pos;
+        VELOCITY vel;
+        TIME time;
 
-        void update() {
+        /* returns current position in global coordinate frame */
+        POSITION get_cur_pos(TIME now) {
+            // initialize with original position
+            POSITION p;
+            std::copy(std::begin(this->pos), std::end(this->pos), std::begin(p));
 
+            // calculate current position due to velocity
+            TIME dt = now - this->time;
+            for(int i = 0; i < DIMS; i++) {
+                p[i] += this->vel[i] * dt;
+            }
+
+            return p;
         }
+    
     public:
-        void get_rel_pos() {
-
+        /* updates current position */
+        void update(TIME now) {
+            if(this->time != now) {
+                this->pos = this->get_cur_pos(now);
+                this->time = now;
+            }
         }
-        void get_rel_vel() {
-            
+        /* applies an instant accelertion of dv */
+        void accelerate(VELOCITY dv) {
+            for(int i = 0; i < DIMS; i++) {
+                this->vel[i] += dv[i];
+            }
+        }
+
+        /* returns difference in position in global coordinate frame */
+        POSITION get_rel_pos(Translation& other, TIME now) {
+            // update position to current time
+            this->update(now);
+            other.update(now);
+
+            // initialize with current position
+            POSITION p;
+            std::copy(std::begin(this->pos), std::end(this->pos), std::begin(p));
+
+            // subtract other's current position
+            for(int i = 0; i < DIMS; i++) {
+                p[i] -= other.pos[i];
+            }
+
+            return p;
+        }
+        /* returns difference in velocity in global coordinate frame */
+        VELOCITY get_rel_vel(Translation& other, TIME now) {
+            // initialize with velocity
+            VELOCITY v;
+            std::copy(std::begin(this->vel), std::end(this->vel), std::begin(v));
+
+            // subtract other's velocity
+            for(int i = 0; i < DIMS; i++) {
+                v[i] -= other.vel[i];
+            }
+
+            return v;
+        }
+        
+        // TODO find a way to allow construction for initial config but not while sim is running
+        Translation() {
+            this->pos = {0,0,0};
+            this->vel = {0,0,0};
+            this->time = 0;
+        }
+
+        friend std::ostream& operator<<(std::ostream& os, const Translation& obj) {
+            for(auto &dim: obj.pos) {
+                os << dim << ' ';
+            }
+
+            return os;
         }
 };
 
@@ -40,3 +115,5 @@ class Rotation {
 
         }
 };
+
+#endif
