@@ -6,19 +6,21 @@
 #include <algorithm>
 #include "number.cpp"
 
+// TODO typedef and move unit related to an other section
 #define DIMS 3
 #define POSITION std::array<int64_t,DIMS>
 #define VELOCITY std::array<int32_t,DIMS>
 #define TIME uint32_t
 
+/* defines a position in the global refrence frame */
 class Translation {
     private:
-        POSITION pos;
-        VELOCITY vel;
-        TIME time;
+        POSITION pos; /* position vector of last update */
+        VELOCITY vel; /* velocity vector */
+        TIME time;    /* time of last update */
 
         /* returns current position in global coordinate frame */
-        POSITION get_cur_pos(TIME now) {
+        POSITION cur_pos(TIME now) {
             // initialize with original position
             POSITION p;
             std::copy(std::begin(this->pos), std::end(this->pos), std::begin(p));
@@ -35,10 +37,11 @@ class Translation {
         /* updates current position */
         void update(TIME now) {
             if(this->time != now) {
-                this->pos = this->get_cur_pos(now);
+                this->pos = this->cur_pos(now);
                 this->time = now;
             }
         }
+    
     public:
         /* applies an instant accelertion of dv */
         void accelerate(VELOCITY dv, TIME now) {
@@ -51,8 +54,31 @@ class Translation {
             }
         }
 
+        /* returns L2 norm between two positions */
+        double_t dist_to(Translation& other, TIME now) {
+            // update this's position to current time
+            this->update(now);
+            other.update(now);
+            
+            // initialize difference vector to current position and subtract other
+            POSITION diff;
+            std::copy(std::begin(this->pos), std::end(this->pos), std::begin(diff));
+            for(int i = 0; i < DIMS; i++) {
+                diff[i] -= other.pos[i];
+            }
+
+            // calculate dot product
+            double_t dist = 0.0;
+            for(int i = 0; i < DIMS; i++) {
+                double_t dp = static_cast<double_t>(diff[i]);
+                dist += dp*dp;
+            }
+            
+            // return L2 norm
+            return sqrt(dist);
+        }
         /* returns difference in position in global coordinate frame */
-        POSITION get_rel_pos(Translation& other, TIME now) {
+        POSITION pos_rel_to(Translation& other, TIME now) {
             // update this's position to current time
             this->update(now);
             other.update(now);
@@ -69,7 +95,7 @@ class Translation {
             return p;
         }
         /* returns difference in velocity in global coordinate frame */
-        VELOCITY get_rel_vel(Translation& other) {
+        VELOCITY vel_rel_to(Translation& other) {
             // initialize with this's velocity
             VELOCITY v;
             std::copy(std::begin(this->vel), std::end(this->vel), std::begin(v));
@@ -89,22 +115,28 @@ class Translation {
             this->time = 0;
         }
 
-        // TODO make this better formatted
         friend std::ostream& operator<<(std::ostream& os, const Translation& obj) {
-            for(auto &dim: obj.pos) {
-                os << dim << ' ';
+            os << "{pos: <";
+            for(auto &pos_dim: obj.pos) {
+                os << pos_dim << ' ';
             }
+            os << "\b>, vel: <";
+            for(auto &pos_dim: obj.vel) {
+                os << pos_dim << ' ';
+            }
+            os << "\b>, time: <" << obj.time << ">}";
 
             return os;
         }
 };
 
+/* defines a orientation in the global refrence frame */
 class Rotation {
     private:
-        Quaternion ori;
-        Unit rot[3];
-        Angle vel;
-        uint32_t time;
+        Quaternion ori; /* orientation quaternion of last update */
+        Unit rot[3];    /* axis of rotation */
+        Angle vel;      /* rotation rate */
+        uint32_t time;  /* time of last update */
         
         void update() {
 
@@ -121,13 +153,26 @@ class Rotation {
         }
 };
 
+/* defines both position and orientation in a relative reference frame */
+class Pose {
+    /* 
+     * Translation
+     * Rotation
+     */
+};
+
+/* defines the newtonian physics of an object */
 class Object {
     /* 
      * mass
-     * translation
-     * 
      * x,y,z moment of inertia
-     * rotation
+     * pose
+     */
+
+    /* 
+     * f = ma
+     * τ = Ia
+     * every action has an oposite and equal reaction
      */
 };
 
