@@ -148,7 +148,7 @@ class Quaternion {
             return *this;
         }
 
-        /*  */
+        /* displays the raw values of the instance variables */
         friend std::ostream& operator<<(std::ostream& os, const Quaternion& obj) {
             os << '<';
             for(int i = 0; i < 4; i++) {
