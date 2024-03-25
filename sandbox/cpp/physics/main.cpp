@@ -6,13 +6,8 @@
 #include "physics.cpp"
 
 int main(int argc, char **argv) {
-    Translation t1 = Translation(); // worldframe
-    Translation t2 = Translation();
 
-    t2.accelerate({2147483647,0,0}, 10); // set to max velocity
-    t2.accelerate({-2147483647,0,0}, 10); // set to max velocity
-
-    std::cout << t2.dist_to(t1, 10);
+    std::cout << Quaternion(0.5,1.1,0.3,0.1);
 
     return 0;
 }

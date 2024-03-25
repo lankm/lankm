@@ -115,6 +115,7 @@ class Translation {
             this->time = 0;
         }
 
+        /* displays the raw values of the instance variables */
         friend std::ostream& operator<<(std::ostream& os, const Translation& obj) {
             os << "{pos: <";
             for(auto &pos_dim: obj.pos) {
@@ -142,6 +143,24 @@ class Rotation {
 
         }
     public:
+        /* defaults to no rotation at start of time */
+        Rotation() {
+            // start with no rotation
+            ori = Quaternion();
+
+            // set unit vector to <1,0,0>
+            rot[1] = Unit();
+            for(int i = 1; i < DIMS; i++) {
+                rot[i] = Unit(0.0);
+            }
+
+            // no rotational velocity
+            vel = 0;
+
+            // last updated at beginning of time
+            time = 0;
+        }
+
         void get_rel_ori() {
 
         }
@@ -150,6 +169,11 @@ class Rotation {
         }
         void get_vel() {
 
+        }
+
+        // TODO
+        friend std::ostream& operator<<(std::ostream& os, const Rotation& obj) {
+            return os;
         }
 };
 

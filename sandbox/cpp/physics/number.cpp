@@ -7,46 +7,57 @@
 #include <iomanip>
 
 #define BIT_ALIGN 30
+
+/* fixed point represtion of a number between -1 to 1 */
 class Unit {
-    /* Represents a number between -2.0 and 1.9999...
-     * Implemented to be fast and simple.
-     * More precise than a float32_t.
-     */
     private:
+        /* can hold values between -2 to 1.999... */
         int32_t val;
         
+        /* raw val setter */
         Unit(int32_t num) {
             val = num;
         }
+
     public:
+        /* defaults to 1 */
         Unit() {
             val = ((uint32_t)1 << BIT_ALIGN);
         }
+        /* float -> Unit */
         Unit(double num) {
             val = num*Unit().val;
         }
 
-        // addition ===========================================================
+        // TODO implement += -+ *= /+ operators
+        /* simple addition */
         Unit operator+(const Unit& other) const {
             return Unit(val + other.val);
         }
-        // subtraction ========================================================
+        /* simple subtraction */
         Unit operator-(const Unit& other) const {
             return Unit(val - other.val);
         }
-        // multiplication =====================================================
+        /* fixed point multiplication */
         Unit operator*(const Unit& other) const {
             // multiply then shift right
             int64_t calc = ( (int64_t)val * (int64_t)other.val) >> BIT_ALIGN;
             return Unit( (int32_t)calc );
         }
-        // division ===========================================================
+        /* fixed point division */
         Unit operator/(const Unit& other) const {
             // shift left then divide
             int64_t calc = ( ((int64_t)val<<BIT_ALIGN) / (int64_t)other.val );
             return Unit( (int32_t)calc );
         }
-
+        /* square root function passthrough */
+        Unit sqrt()  {
+            // squareroot then renormalize
+            double calc = std::sqrt(val) / (1 << (BIT_ALIGN>>1));
+            
+            return Unit(calc);
+        }
+        
         friend std::ostream& operator<<(std::ostream& os, const Unit& obj) {
             os << (double)obj.val / (double)Unit().val;
             return os;
@@ -54,18 +65,18 @@ class Unit {
 };
 
 # define PI2 (uint64_t)1<<32
+/* fixed point representation of an angle between 0 to 2pi */
 class Angle {
-    /* Represents an angle between 0-1.9999...pi radians.
-     * Utilizes over/underflows to represent rotations.
-     * More precise than float32_t.
-     * Keeps precision after multiple rotations.
-     */
     private:
+        /*  */
         uint32_t ang;
+
     public:
+        /*  */
         Angle() {
             ang = 0;
         }
+        /*  */
         Angle(double theta) {
             double rem = fmod(theta, 2*3.1415926535897932384626);
             rem /= 2*3.1415926535897932384626;
@@ -74,6 +85,7 @@ class Angle {
             ang = (uint32_t)rem;
         }
 
+        /*  */
         friend std::ostream& operator<<(std::ostream& os, const Angle& obj) {
             os << obj.ang;
             return os;
@@ -81,11 +93,71 @@ class Angle {
 
 };
 
+/* represents a unit quaternion */
 class Quaternion {
     private:
+        /* simple array values of a quaternion */
         Unit q[4];
-    public:
 
+    public:
+        /* defaults to <1,0,0,0> */
+        Quaternion() {
+            this->q[0] = Unit();
+            this->q[1] = Unit(0.0);
+            this->q[2] = Unit(0.0);
+            this->q[3] = Unit(0.0);
+        }
+
+        Quaternion(double a, double b, double c, double d) {
+            this->q[0] = Unit(a);
+            this->q[1] = Unit(b);
+            this->q[2] = Unit(c);
+            this->q[3] = Unit(d);
+
+            this->normalize();
+        }
+
+        // TODO implement *= operators
+        /* right multiplication of quaterions */
+        Quaternion operator*(const Quaternion& other) const {
+            // start with blank quaternion
+            Quaternion result = Quaternion();
+
+            // multiplication based on quaternion rules
+            result.q[0] = q[0]*other.q[0] - q[1]*other.q[1] - q[2]*other.q[2] - q[3]*other.q[3];
+            result.q[1] = q[0]*other.q[1] + q[1]*other.q[0] + q[2]*other.q[3] - q[3]*other.q[2];
+            result.q[2] = q[0]*other.q[2] - q[1]*other.q[3] + q[2]*other.q[0] + q[3]*other.q[1];
+            result.q[3] = q[0]*other.q[3] + q[1]*other.q[2] - q[2]*other.q[1] + q[3]*other.q[0];
+
+            // return final result
+            return result;
+        }
+
+        Unit norm() {
+            Unit dot = q[0]*q[0] + q[1]*q[1] + q[2]*q[2] + q[3]*q[3];
+            return dot.sqrt();
+            
+        }
+        Quaternion& normalize() {
+            Unit norm = this->norm();
+
+            for(int i = 0; i < 4; i++) {
+                q[i] = q[i] / norm;
+            }
+
+            return *this;
+        }
+
+        /*  */
+        friend std::ostream& operator<<(std::ostream& os, const Quaternion& obj) {
+            os << '<';
+            for(int i = 0; i < 4; i++) {
+                os << obj.q[i] << ' ';
+            }
+            os << "\b>";
+
+            return os;
+        }
 };
 
 #endif
