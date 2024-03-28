@@ -11,13 +11,17 @@ int main(int argc, char **argv)
     std::random_device rd;
     std::mt19937 gen(rd());
 
-    std::uniform_real_distribution<float> dist(0.0f, 0.5f);
+    std::uniform_real_distribution<float> dist(-0.5f, 0.5f);
+
+    std::cout << std::setprecision(15);
     
     for (int i = 0; i < 100; i++)
     {
-        Quaternion q = Quaternion(dist(gen),dist(gen),dist(gen),dist(gen));
+        Quaternion q = Quaternion(dist(gen),dist(gen),dist(gen),dist(gen)).normalize();
 
-        std::cout << ' ' << q*q.inv() << std::endl;
+        std::cout << q.norm() << std::endl;
+        
+        std::cout << "    " << q*q.inv() << std::endl;
     }
 
     return 0;

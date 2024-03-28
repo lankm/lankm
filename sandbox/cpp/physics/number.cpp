@@ -52,12 +52,12 @@ class Unit {
         }
         /* square root function passthrough */
         Unit operator-() const {
-            return Unit(-val);
+            return Unit(-this->val);
         }
         /* square root function passthrough */
         Unit sqrt()  {
             // squareroot then renormalize
-            double calc = std::sqrt(val) / (1 << (BIT_ALIGN>>1));
+            double calc = std::sqrt(this->val) / (1 << (BIT_ALIGN>>1));
             
             return Unit(calc);
         }
@@ -120,8 +120,6 @@ class Quaternion {
             this->q[1] = b;
             this->q[2] = c;
             this->q[3] = d;
-
-            this->normalize();
         }
 
         // TODO implement *= operators
@@ -140,24 +138,18 @@ class Quaternion {
             return result.normalize();
         }
 
-        /* returns the length of the quaternion */
-        Unit rotate(Unit x, Unit y, Unit z) {
-            Unit dot = q[0]*q[0] + q[1]*q[1] + q[2]*q[2] + q[3]*q[3];
-            return dot.sqrt();
-            
-        }
+        /* applies a rotation to a 3d vector */
+        // TODO
 
         /* returns the length of the quaternion */
         Unit norm() {
             Unit dot = q[0]*q[0] + q[1]*q[1] + q[2]*q[2] + q[3]*q[3];
             return dot.sqrt();
-            
         }
         /* returns the inverse of a */
         Quaternion inv() {
             return Quaternion(q[0], -q[1], -q[2], -q[3]);
         }
-        
         
         /* normalizes the quaternion object */
         Quaternion& normalize() {
