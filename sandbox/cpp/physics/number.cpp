@@ -40,8 +40,8 @@ class Unit {
         }
         /* fixed point multiplication */
         Unit operator*(const Unit& other) const {
-            // multiply then shift right
-            int64_t calc = ( (int64_t)val * (int64_t)other.val) >> BIT_ALIGN;
+            // multiply then shift right. Rounding implemented
+            int64_t calc = ( (int64_t)val * (int64_t)other.val + (1<<(BIT_ALIGN-1))) >> BIT_ALIGN;
             return Unit( (int32_t)calc );
         }
         /* fixed point division */
@@ -51,6 +51,10 @@ class Unit {
             return Unit( (int32_t)calc );
         }
         /* square root function passthrough */
+        Unit operator-() const {
+            return Unit(-val);
+        }
+        /* square root function passthrough */
         Unit sqrt()  {
             // squareroot then renormalize
             double calc = std::sqrt(val) / (1 << (BIT_ALIGN>>1));
@@ -58,6 +62,7 @@ class Unit {
             return Unit(calc);
         }
         
+        /* convert to double */
         friend std::ostream& operator<<(std::ostream& os, const Unit& obj) {
             os << (double)obj.val / (double)Unit().val;
             return os;
@@ -108,11 +113,13 @@ class Quaternion {
             this->q[3] = Unit(0.0);
         }
 
-        Quaternion(double a, double b, double c, double d) {
-            this->q[0] = Unit(a);
-            this->q[1] = Unit(b);
-            this->q[2] = Unit(c);
-            this->q[3] = Unit(d);
+        /* raw data passthrough */
+        Quaternion(double a, double b, double c, double d) : Quaternion(Unit(a), Unit(b), Unit(c), Unit(d)) {}
+        Quaternion(Unit a, Unit b, Unit c, Unit d) {
+            this->q[0] = a;
+            this->q[1] = b;
+            this->q[2] = c;
+            this->q[3] = d;
 
             this->normalize();
         }
@@ -130,14 +137,29 @@ class Quaternion {
             result.q[3] = q[0]*other.q[3] + q[1]*other.q[2] - q[2]*other.q[1] + q[3]*other.q[0];
 
             // return final result
-            return result;
+            return result.normalize();
         }
 
+        /* returns the length of the quaternion */
+        Unit rotate(Unit x, Unit y, Unit z) {
+            Unit dot = q[0]*q[0] + q[1]*q[1] + q[2]*q[2] + q[3]*q[3];
+            return dot.sqrt();
+            
+        }
+
+        /* returns the length of the quaternion */
         Unit norm() {
             Unit dot = q[0]*q[0] + q[1]*q[1] + q[2]*q[2] + q[3]*q[3];
             return dot.sqrt();
             
         }
+        /* returns the inverse of a */
+        Quaternion inv() {
+            return Quaternion(q[0], -q[1], -q[2], -q[3]);
+        }
+        
+        
+        /* normalizes the quaternion object */
         Quaternion& normalize() {
             Unit norm = this->norm();
 
