@@ -165,6 +165,7 @@ class fQuaternion {
             // calculate inverse norm
             double dot = q[0]*q[0] + q[1]*q[1] + q[2]*q[2] + q[3]*q[3];
             double invnorm = ((1.0-dot)/2)+1;
+            // double invnorm = 1/sqrt(dot);
 
             // apply
             q[0] = a*invnorm;
@@ -204,11 +205,11 @@ int main(int argc, char **argv) {
     std::uniform_real_distribution<float> dist(-0.5f, 0.5f);
 
     std::cout << std::setprecision(20);
-    fQuaternion q = fQuaternion(dist(gen),dist(gen),dist(gen),dist(gen));
+    Quaternion q = Quaternion(dist(gen),dist(gen),dist(gen),dist(gen));
 
     // Start the clock
     auto start = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < 1000000; i++)
+    for (int i = 0; i < 100000000; i++)
     {   
         q *= q;
     }
@@ -224,3 +225,8 @@ int main(int argc, char **argv) {
 
     return 0;
 }
+
+// 100,000,000 iterations
+// classic: 3.7s
+// qinvnorm: 2.6s (better precision)
+// fixed32: 2.3s  (better memory/speed)
