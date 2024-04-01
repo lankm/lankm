@@ -18,7 +18,7 @@ class Unit {
         /* definition of 1 for i32, i64, and i16 */
         static const int32_t ONE = 1<<BIT_ALIGN;
         static const int64_t ONE_UP = 1ll<<(BIT_ALIGN<<1);
-        static const int16_t ONE_DOWN = 1<<(BIT_ALIGN>>1);
+        static const uint16_t ONE_DOWN = 1<<(BIT_ALIGN>>1);
 
         /* can hold values between -2 to 1.999... */
         int32_t val;
@@ -29,18 +29,23 @@ class Unit {
             val = num;
         }
 
+        /* add rounding constant and right bitshift */
         static int32_t to_i32(int64_t num) {
             return (num + ROUND)>>BIT_ALIGN;
         }
+        /* bitshift left */
+        static int64_t to_i64(int32_t num) {
+            return num<<BIT_ALIGN;
+        }
 
     public:
-        /* defaults to 1 */
+        /* defaults to 0 */
         Unit() {
-            val = ((uint32_t)1 << BIT_ALIGN);
+            val = 0;
         }
         /* float -> Unit */
         Unit(double num) {
-            val = num*Unit().val;
+            val = num*ONE;
         }
 
         // TODO implement += -+ *= /+ operators
@@ -54,31 +59,29 @@ class Unit {
         }
         /* fixed point multiplication */
         Unit operator*(const Unit& other) const {
-            // multiply then shift right. Rounding implemented
-            int64_t calc = ( (int64_t)val * (int64_t)other.val + ROUND) >> BIT_ALIGN;
-            return Unit( (int32_t)calc );
+            // multiply in i64 then convert back to i32
+            return Unit( to_i32( (int64_t)val * (int64_t)other.val) );
         }
         /* fixed point division */
         Unit operator/(const Unit& other) const {
             // shift left then divide
-            int64_t calc = ( ((int64_t)val<<BIT_ALIGN) / (int64_t)other.val );
-            return Unit( (int32_t)calc );
+            int64_t calc = ( to_i64(val) / other.val );
+            return Unit( to_i32(calc) );
         }
         /* square root function passthrough */
         Unit operator-() const {
-            return Unit(-this->val);
+            return Unit( -(this->val) );
         }
+        
         /* square root function passthrough */
         Unit sqrt()  {
             // squareroot then renormalize
-            double calc = std::sqrt(this->val) / ONE_DOWN;
-            
-            return Unit(calc);
+            return Unit( std::sqrt(this->val) / ONE_DOWN );
         }
         
         /* convert to double */
         friend std::ostream& operator<<(std::ostream& os, const Unit& obj) {
-            os << (double)obj.val / (double)Unit().val;
+            os << (double)obj.val / (double)ONE;
             return os;
         }
 };
@@ -139,7 +142,7 @@ class Quaternion {
         /* quick inverse square root */
         int32_t invnorm() {
             // calculate quick inverse norm. based on derivitive of x^(1/2) at x=1
-            return Unit::to_i32( 
+            return Unit::to_i32(
                 (Unit::ONE_UP - this->dot()     // subtract one and invert
                 >> 1)                           // divide by 2
                 + Unit::ONE_UP                  // add one
