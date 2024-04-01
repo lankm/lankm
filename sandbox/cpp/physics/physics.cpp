@@ -137,7 +137,7 @@ class Rotation {
         Quaternion ori; /* orientation quaternion of last update */
         Unit rot[3];    /* axis of rotation */
         Angle vel;      /* rotation rate */
-        uint32_t time;  /* time of last update */
+        TIME time;      /* time of last update */
         
         void update() {
 
@@ -149,10 +149,10 @@ class Rotation {
             ori = Quaternion();
 
             // set unit vector to <1,0,0>
-            rot[1] = Unit();
-            for(int i = 1; i < DIMS; i++) {
-                rot[i] = Unit(0.0);
-            }
+            rot[0] = Unit(1.0);
+            rot[1] = Unit(0.0);
+            rot[2] = Unit(0.0);
+            
 
             // no rotational velocity
             vel = 0;
