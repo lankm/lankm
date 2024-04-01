@@ -213,7 +213,7 @@ class Quaternion {
             q[2] = Unit( Unit::to_i32(result.q[2].val*(int64_t)invnorm) );
             q[3] = Unit( Unit::to_i32(result.q[3].val*(int64_t)invnorm) );
 
-            return result;
+            return *this;
         }
 
         /* returns the inverse of a Quaternion */
