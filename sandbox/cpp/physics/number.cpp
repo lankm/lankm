@@ -24,7 +24,7 @@ class Unit {
         int32_t val;
         
         /* raw value constructors */
-        Unit(int64_t num) : Unit ((int32_t)num) {}
+        Unit(int64_t num) : Unit (to_i32(num)) {}
         Unit(int32_t num) {
             val = num;
         }
@@ -146,7 +146,6 @@ class Quaternion {
             );
         }
 
-
     public:
         /* default of <1,0,0,0> */
         Quaternion() {
@@ -220,6 +219,7 @@ class Quaternion {
         Quaternion inv() {
             return Quaternion(q[0], -q[1], -q[2], -q[3]);
         }
+        /* used for testing. should always be ~1 */
         double norm() {
             return sqrt( this->dot() ) / Unit::ONE;
         }
@@ -235,5 +235,6 @@ class Quaternion {
             return os;
         }
 };
+
 
 #endif
