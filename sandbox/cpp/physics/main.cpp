@@ -7,6 +7,10 @@
 #include "number.cpp"
 #include "physics.cpp"
 
+void speed_test() {
+    
+}
+
 int main(int argc, char **argv) {
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -23,7 +27,7 @@ int main(int argc, char **argv) {
     }
     // Stop the clock
     auto end = std::chrono::high_resolution_clock::now();
-    std::cout << q.norm() << std::endl;
+    std::cout << q << std::endl;
 
     // Calculate the duration
     std::chrono::duration<double> duration = end - start;
@@ -31,7 +35,6 @@ int main(int argc, char **argv) {
     // Print the duration in seconds
     std::cout << "Time taken: " << duration.count() << " seconds" << std::endl;
 
-    return 0;
     
     
     return 0;
