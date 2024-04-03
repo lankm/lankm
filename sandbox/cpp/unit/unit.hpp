@@ -27,95 +27,70 @@ class Unit {
     public:
         double val;
 
-        Unit() {
-            this->val = 0.0;
-        }
-        Unit(double val) {
-            this->val = val;
-        }
+        Unit() {this->val = 0;}
+        Unit(double val) {this->val = val;}
 };
+
 /* s:0, m:0, kg:0, A:0, K:0, cd:0 */
-class Unitless : Unit {
+class Unitless : public Unit {
     public:
         Unitless() : Unit() {}
         Unitless(double val) : Unit(val) {}
 
         /* addition */
-        Unitless operator+(const Unitless& other) const {
-            return Unitless(val + other.val);
-        }
+        Unitless operator+(const Unitless& other);
+        Unitless& operator+=(const Unitless& other);
         /* subtraction */
-        Unitless operator-(const Unitless& other) const {
-            return Unitless(val - other.val);
-        }
-
+        Unitless operator-(const Unitless& other);
+        Unitless& operator-=(const Unitless& other);
         /* multiplication */
-        Time operator*(const Time& other) const {
-            return Time(val * other.val);
-        }
+        Unitless operator*(const Unitless& other);
+        Unitless& operator*=(const Unitless& other);
+        Time operator*(const Time& other);
         /* division */
-        Unit operator/(const Unit& other) const {
-            // shift left then divide
-            return Unit();
-        }
-};
-/* s:0, m:0, kg:1, A:0, K:0, cd:0 */
-class Mass : Unit {
+        Unitless operator/(const Unitless& other);
+        Unitless& operator/=(const Unitless& other);
 
+        friend std::ostream& operator<<(std::ostream& os, const Unitless& obj) {return os << obj.val;}
 };
 /* s:1, m:0, kg:0, A:0, K:0, cd:0 */
 class Time : public Unit {
     public:
         Time() : Unit() {}
         Time(double val) : Unit(val) {}
-};
-/* s:0, m:1, kg:0, A:0, K:0, cd:0 */
-class Length : Unit {
 
-};
-/* s:0, m:0, kg:0, A:1, K:0, cd:0 */
-class Electric_Current : Unit {
+        /* addition */
+        Time operator+(const Time& other);
+        Time& operator+=(const Time& other);
+        /* subtraction */
+        Time operator-(const Time& other);
+        Time& operator-=(const Time& other);
+        /* multiplication */
+        Time operator*(const Unitless& other);
+        Time& operator*=(const Unitless& other);
+        /* division */
+        Time operator/(const Unitless& other);
+        Time& operator/=(const Unitless& other);
 
-};
-/* s:0, m:0, kg:0, A:0, K:1, cd:0 */
-class Temperature : Unit {
-
-};
-/* s:0, m:0, kg:0, A:0, K:0, cd:1 */
-class Luminous_Intensity : Unit {
-
-};
-/* s:0, m:2, kg:0, A:0, K:0, cd:0 */
-class Area : Unit {
-
-};
-/* s:0, m:3, kg:0, A:0, K:0, cd:0 */
-class Volume : Unit {
-
-};
-/* s:-1, m:0, kg:0, A:0, K:0, cd:0 */
-class Frequency : Unit {
-
-};
-/* s:-2, m:1, kg:1, A:0, K:0, cd:0 */
-class Force : Unit {
-
-};
-/* s:-2, m:-1, kg:1, A:0, K:0, cd:0 */
-class Pressure : Unit {
-
-};
-/* s:-2, m:2, kg:1, A:0, K:0, cd:0 */
-class Energy : Unit {
-
-};
-/* s:-3, m:2, kg:1, A:0, K:0, cd:0 */
-class Power : Unit {
-
-};
-/* s:-3, m:2, kg:1, A:0, K:0, cd:0 */
-class Electric_Charge : Unit {
-
+        friend std::ostream& operator<<(std::ostream& os, const Time& obj) {return os << obj.val;}
 };
 
+Unitless Unitless::operator+(const Unitless& other) {return this->val + other.val;}
+Unitless& Unitless::operator+=(const Unitless& other) {this->val += other.val; return *this;}
+Unitless Unitless::operator-(const Unitless& other) {return this->val - other.val;}
+Unitless& Unitless::operator-=(const Unitless& other) {this->val -= other.val; return *this;}
+Unitless Unitless::operator*(const Unitless& other) {return this->val * other.val;}
+Unitless& Unitless::operator*=(const Unitless& other) {this->val *= other.val; return *this;}
+Time Unitless::operator*(const Time& other) {return this->val * other.val;}
+Unitless Unitless::operator/(const Unitless& other) {return this->val / other.val;}
+Unitless& Unitless::operator/=(const Unitless& other) {this->val /= other.val; return *this;}
+
+Time Time::operator+(const Time& other) {return this->val + other.val;}
+Time& Time::operator+=(const Time& other) {this->val += other.val; return *this;}
+Time Time::operator-(const Time& other) {return this->val - other.val;}
+Time& Time::operator-=(const Time& other) {this->val -= other.val; return *this;}
+Time Time::operator*(const Unitless& other) {return this->val * other.val;}
+Time& Time::operator*=(const Unitless& other) {this->val *= other.val; return *this;}
+Time Time::operator/(const Unitless& other) {return this->val / other.val;}
+Time& Time::operator/=(const Unitless& other) {this->val /= other.val; return *this;}
 #endif
