@@ -183,10 +183,15 @@ class Pose {
      * Translation
      * Rotation
      */
+    public:
+        Translation Translation;
+        Rotation rotation;
 };
 
 /* defines the newtonian physics of an object */
 class Object {
+    private:
+        Pose pose;
     /* 
      * mass
      * x,y,z moment of inertia
