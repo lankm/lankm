@@ -3,7 +3,11 @@
 
 int main(int argc, char **argv) {
     Unitless u = 1.0;
+    Time t = 5;
+    Frequency f = 2;
 
-    std::cout << u+0.1 << std::endl;
+    Time temp = u*t;
+
+    std::cout << temp << std::endl;
     return 0;
 }
