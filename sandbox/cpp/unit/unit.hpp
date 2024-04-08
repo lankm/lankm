@@ -1,6 +1,8 @@
 #ifndef UNIT_GUARD_H
 #define UNIT_GUARD_H
 
+#include <iostream>
+
 #define DEFINE_OPERATOR(class1, op, class2, class3) \
 class3 class1::operator op(const class2& other) {return this->val + other.val;}
 
