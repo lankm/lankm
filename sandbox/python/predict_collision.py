@@ -11,14 +11,19 @@ def main():
     s1 = Sphere([-1.11,-1.36,0],[1.164,-0.055,0],0.25)
     s2 = Sphere([ 0.7, -1.61,0],[0.53,  0.434,0],1)
 
+    # calculating difference vectors
     dp = s1.pos - s2.pos
     dv = s1.vel - s2.vel
+
+    # calculating distance of collision
     r = (s1.r + s2.r)**2
 
+    # calculating dot products
     pp = dp@dp
     pv = dp@dv
     vv = dv@dv
 
+    # simplified quadratic equation
     discriminant = pv**2 - vv*(pp - r)
     if discriminant < 0:
         print("Will not collide")
