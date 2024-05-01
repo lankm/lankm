@@ -30,7 +30,9 @@ class Pose # pose using relative basis vectors
   pub cur_ori_diff(other, cur_time) # passthrough. uses rot to change basis [TODO details]
   pub rot_accelerate(vel_diff, cur_time) # uses rot to change basis. passthrough [TODO details]
 
-class Entity # applies relative forces
+class Entity # applies relative forces. pose.trans.cur_pos() is the center of mass.
   pri pose # pose object
   pri mass # inertial mass
   pri moi # moment of inertia
+
+  [TODO continue]
