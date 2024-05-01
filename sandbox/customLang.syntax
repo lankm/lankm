@@ -1,0 +1,67 @@
+from stdlib import stdout as out
+
+fun primitives() {
+    # numeric types
+    int<128>[3] pos = [0,0,0];  # int<128>[3] pos = [0,0,0];
+    uint i = 0;                 # uint<32>[1] = [0];
+    float<64> total = 12.7;     # uint<64>[1] = [12.7];
+
+    # character types
+    utf ch = 'a';               # utf<8>[1] = ['a'];
+    utf[] str = "Hello world";  # utf<8>[12] = ['H','e','l','l','o',' ','w','o','r','l','d','\0'];
+
+    # int    defualts to int<32>[1]
+    # uint   defaults to uint<32>[1]
+    # float  defaults to float<32>[1]
+    # utf    defaults to utf<8>[1]
+}
+
+fun structures() {
+    struct
+    tuple
+    class
+    union
+}
+
+fun control(): int {
+    int<32> result;
+    
+    # if else
+    if(a == b) {
+        result = 1;
+    } else if(a < b) {
+        result = 2;
+    } else {
+        result = 3;
+    }
+
+    # match
+    match(result) {
+        case(a < b) {
+            result = 1;
+        }
+        case(a == b) {
+            result = 2;
+        }
+        case(a > b) {
+            result = 3;
+        }
+    }
+
+    # while loop
+    while(result < 20) {
+        result += 1;
+    }
+
+    # do while loop
+    while({
+        result += 1;
+        result < 20
+    })
+
+    result
+}
+
+fun main(int<8>: param1, int<8>[3]: param2): int {
+    
+}

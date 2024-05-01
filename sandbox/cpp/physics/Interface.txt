@@ -1,0 +1,36 @@
+class Translation # translation using global basis vectors
+  pri pos # position of last update
+  pri vel # velocity
+  pri time # time of last update
+
+  pri cur_pos(cur_time) # pos + dt*vel
+  pri update(cur_time) # pos -> cur_pos(). time -> cur_time
+  pub accelerate(vel_diff, cur_time) # update(). vel += vel_diff
+  pub cur_pos_diff(other, cur_time) # other.cur_pos() - cur_pos()
+  pub cur_vel_diff(other, cur_time) # other.vel - vel
+
+class Rotation # rotation using global basis vectors
+  pri ori # orientation of last update
+  pub rot # rotation vector
+  pub vel # angular velocity
+  pri time # time of last update
+
+  pri cur_ori(cur_time) # left multiply quaternions. (cos(),sin()*rot)*ori
+  pri update(cur_time) # ori = cur_ori()
+  pub accelerate(rot, vel_diff, cur_time) # update(). update rot and vel [TODO learn]
+  pub cur_ori_diff(other, cur_time) # solve for other.cur_ori() = x*cur_ori() [TODO learn]
+
+class Pose # pose using relative basis vectors
+  pri trans # translation object
+  pri rot # rotation object
+
+  pub cur_pos_diff(other, cur_time) # passthrough. uses rot to change basis [TODO details]
+  pub cur_vel_diff(other, cur_time) # passthrough. uses rot to change basis [TODO details]
+  pub trans_accelerate(vel_diff, cur_time) # uses rot to change basis. passthrough [TODO details]
+  pub cur_ori_diff(other, cur_time) # passthrough. uses rot to change basis [TODO details]
+  pub rot_accelerate(vel_diff, cur_time) # uses rot to change basis. passthrough [TODO details]
+
+class Entity # applies relative forces
+  pri pose # pose object
+  pri mass # inertial mass
+  pri moi # moment of inertia
