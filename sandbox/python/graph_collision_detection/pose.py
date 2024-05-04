@@ -4,7 +4,7 @@ class Quaternion:
     def mul(a, b):
         result = np.zeros(4)
         
-        result[0] = a[0]*b[0] + a[1]*b[1] + a[2]*b[2] + a[3]*b[3]
+        result[0] = a[0]*b[0] - a[1]*b[1] - a[2]*b[2] - a[3]*b[3]
         result[1] = a[0]*b[1] + a[1]*b[0] + a[2]*b[3] - a[3]*b[2]
         result[2] = a[0]*b[2] - a[1]*b[3] + a[2]*b[0] + a[3]*b[1]
         result[3] = a[0]*b[3] + a[1]*b[2] - a[2]*b[1] + a[3]*b[0]
@@ -29,7 +29,7 @@ class Pose:
         self.__pos = np.array(pos)
         self.__pos_vel = np.array(pos_vel)
         self.__ori = np.array(ori) / np.linalg.norm(ori)
-        self.__rot_axis = np.array(rot_axis) / np.linalg.norm(ori)
+        self.__rot_axis = np.array(rot_axis) / np.linalg.norm(rot_axis)
         self.__rot_vel = rot_vel
 
     def __glob_pos(self, time):
@@ -46,11 +46,16 @@ class Pose:
             sin*self.__rot_axis[1],
             sin*self.__rot_axis[2]
         ])
+
         return Quaternion.mul(rotator, self.__ori)
-    def __update(self, time):
+    def update(self, time):
         self.__pos = self.__glob_pos(time)
         self.__ori = self.__glob_ori(time)
-        self.__ori /= np.linalg.norm(self.__ori) # can be optimized
+        print(np.linalg.norm(self.__ori))
+
+        # renormalize due to precision errors
+        qinvnorm = (1-np.dot(self.__ori, self.__ori))/2 + 1
+        self.__ori *= qinvnorm
 
         self.__time = time
 

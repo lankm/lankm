@@ -1,6 +1,6 @@
 from pose import *
 from math import pi
-
+from time import sleep
 
 
 
@@ -9,9 +9,8 @@ def main():
     p1 = Pose()
     p2 = Pose( pos_vel=[-1,2,0], rot_axis=[0,1,1], rot_vel=pi/3)
     
-    print(p1.rel_pos(p2, 1))
-    print(p1.rel_vel(p2, 4))
-    print(p1.rel_ori(p2, 7))
+    for i in range(1000000):
+        p2.update(i)
 
 if __name__ == '__main__':
     main()
