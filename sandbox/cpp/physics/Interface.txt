@@ -1,34 +1,71 @@
-class Translation # translation using global basis vectors
-  pri pos # position of last update
-  pri vel # velocity
-  pri time # time of last update
+class Quaternion {
+  pub stat mul(float<64>[4] a, float<64>[4] b): float<64>[4] {
+    # TODO
+  }
+  pub stat inv(float<64>[4] a): float<64>[4] {
+    # TODO
+  }
+  pub stat rotate(float<64>[4] ori, float<64>[3] vec): float<64>[3] {
+    # TODO
+  }
+}
 
-  pri cur_pos(cur_time) # pos + dt*vel
-  pri update(cur_time) # pos -> cur_pos(). time -> cur_time
-  pub accelerate(vel_diff, cur_time) # update(). vel += vel_diff
-  pub cur_pos_diff(other, cur_time) # other.cur_pos() - cur_pos()
-  pub cur_vel_diff(other, cur_time) # other.vel - vel
+class Pose {
+  pri inst float<64>    glob_time;
 
-class Rotation # rotation using global basis vectors
-  pri ori # orientation of last update
-  pub rot # rotation vector
-  pub vel # angular velocity
-  pri time # time of last update
+  pri inst float<64>[3] glob_pos;
+  pri inst float<64>[3] glob_pos_vel;
 
-  pri cur_ori(cur_time) # left multiply quaternions. (cos(),sin()*rot)*ori
-  pri update(cur_time) # ori = cur_ori()
-  pub accelerate(rot, vel_diff, cur_time) # update(). update rot and vel [TODO learn]
-  pub cur_ori_diff(other, cur_time) # other.cur_ori()*cur_ori().inv() [TODO double check]
+  pri inst float<64>[4] glob_ori;
+  pri inst float<64>[3] glob_rot_axis;
+  pri inst float<64>    glob_rot_vel;
 
-class Pose # pose using relative basis vectors
-  pri trans # translation object
-  pri rot # rotation object
+  pri inst cur_glob_pos(float<64> time): float<64>[3] {
+    dt = time - glob_time;
+    return glob_pos + dt*glob_ps_vel;
+  }
+  pri inst cur_glob_ori(float<64> time): float<64>[4] {
+    float<64>    dt = time - glob_time;
+    float<64>    angle = dt*vel
+    float<64>[2] sincos = [sin(angle), cos(angle)];
 
-  pub cur_pos_diff(other, cur_time) # passthrough. uses rot to change basis [TODO details]
-  pub cur_vel_diff(other, cur_time) # passthrough. uses rot to change basis [TODO details]
-  pub trans_accelerate(vel_diff, cur_time) # uses rot to change basis. passthrough [TODO details]
-  pub cur_ori_diff(other, cur_time) # rot.cur_ori().inv()*other.rot.cur_ori() [TODO double check]
-  pub rot_accelerate(vel_diff, cur_time) # uses rot to change basis. passthrough [TODO details]
+    float<64>[4] rot = [
+      sincos[0], 
+      sincos[1]*glob_rot_axis[0],
+      sincos[1]*glob_rot_axis[1],
+      sincos[1]*glob_rot_axis[2]
+    ]
+
+    return Quaternion.mul(rot, glob_ori);
+  }
+  pri inst update(float<64> time) {
+    glob_pos = cur_glob_pos(time);
+    glob_ori = cur_glob_ori(time);
+    glob_time = time;
+  }
+  
+  pri inst glob_pos_diff(Pose other, float<64> time): float<64>[3] {
+    return other.cur_glob_pos(time) - cur_glob_pos(time);
+  }
+  pri inst glob_vel_diff(Pose other, float<64> time): float<64>[3] {
+    return other.glob_pos_vel - glob_pos_vel;
+  }
+
+  pub inst rel_pos(Pose other, float<64> time): float<64>[3] {
+    float<64>[3] glob_pos_diff = glob_pos_diff(other, time);
+    float<64>[4] glob_cur_ori = Quaternion.inv(cur_glob_ori(other, time));
+    return Quaternion.rotate(glob_cur_ori, glob_pos_diff);
+  }
+  pub inst rel_ori(Pose other, float<64> time): float<64>[4] {
+    float<64>[4] glob_cur_ori = Quaternion.inv(cur_glob_ori(other, time));
+    return Quaternion.mul(cur_glob_ori, other.rot.cur_glob_ori());
+  }
+  pub rel_vel(Pose other, float<64> time): float<64>[3] {
+    float<64>[3] glob_vel_diff = glob_vel_diff(other, time);
+    float<64>[4] glob_cur_ori = Quaternion.inv(cur_glob_ori(other, time));
+    return Quaternion.rotate(glob_cur_ori, glob_pos_diff);
+  }
+}
 
 class Entity # applies relative forces. pose.trans.cur_pos() is the center of mass.
   pri pose # pose object
@@ -36,50 +73,3 @@ class Entity # applies relative forces. pose.trans.cur_pos() is the center of ma
   pri moi # moment of inertia
 
   [TODO continue]
-
-===============================================================================
-class XYZ
-  pri v
-class Versor
-  pri q
-
-  pub rotate(xyz): XYZ
-    # q * xyz * q.inv()
-  pub inv(): Versor
-    # negate i j k
-
-class Pose
-  pri glob_time
-
-  pri glob_pos
-  pri glob_pos_vel
-
-  pri glob_ori
-  pri glob_rot_axis
-  pri glob_rot_vel
-
-  pri glob_cur_pos(time): VectorQuaternion
-    # result = pos + dt*vel
-  pri glob_cur_ori(glob_time): Versor
-    # rot = <cos(dt*vel), sin(dt*vel)*axis>
-    # result = rot*ori
-  pri update(time): void
-    # glob_pos = cur_glob_pos(time)
-    # glob_ori = cur_glob_ori(time)
-    # glob_time = time
-  
-  pri glob_pos_diff(other, time): VectorQuaternion
-    # result = other.cur_glob_pos(time) - cur_glob_pos(time)
-  pri glob_vel_diff(other, time): VectorQuaternion
-    # result = other.glob_pos_vel - glob_pos_vel
-
-  pub rel_pos(other, time): VectorQuaternion
-    # glob_pos_diff = glob_pos_diff(other, time)
-    # glob_cur_ori = glob_cur_ori(other, time).inv()
-    # result = glob_cur_ori.rotate(glob_pos_diff)
-  pub rel_ori(other, time): Versor
-
-  pub rel_vel(other, time): pos_vel
-    # calculate difference in velocity
-    # convert global basis to relative basis
-
