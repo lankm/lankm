@@ -11,9 +11,14 @@ class Quaternion:
 
         return result
 
-    def rotate(versor, vector):
-        p = np.array([0,*vector])
-        return Quaternion.mul(Quaternion.mul(versor, p), Quaternion.inv(versor))
+    def rotate(q, p):
+        result = np.zeros(3)
+
+        result[0] = p[0]*(+ q[0]*q[0] + q[1]*q[1] - q[2]*q[2] - q[3]*q[3]) + 2*(p[1]*(q[1]*q[2] - q[0]*q[3]) + p[2]*(q[0]*q[2] + q[1]*q[3]))
+        result[1] = p[1]*(+ q[0]*q[0] - q[1]*q[1] + q[2]*q[2] - q[3]*q[3]) + 2*(p[0]*(q[1]*q[2] + q[0]*q[3]) + p[2]*(q[2]*q[3] - q[0]*q[1]))
+        result[2] = p[2]*(+ q[0]*q[0] - q[1]*q[1] - q[2]*q[2] + q[3]*q[3]) + 2*(p[0]*(q[1]*q[3] - q[0]*q[2]) + p[1]*(q[0]*q[1] + q[2]*q[3]))
+
+        return result
 
     def inv(a):
         return np.array([
@@ -48,7 +53,7 @@ class Pose:
         ])
 
         return Quaternion.mul(rotator, self.__ori)
-    def update(self, time):
+    def __update(self, time):
         self.__pos = self.__glob_pos(time)
         self.__ori = self.__glob_ori(time)
         print(np.linalg.norm(self.__ori))
