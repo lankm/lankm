@@ -13,10 +13,7 @@ class Quaternion:
         return result
 
     def rotate(q, p):
-        # 32 mul, 24 add
-
-        # 36 mul, 21 add -> 19 mul, 21 add, 3 bitshift
-
+        # 19 mul, 21 add, 3 bitshift
         result = np.zeros(3)
 
         q00 = q[0]*q[0]
