@@ -8,10 +8,19 @@ class CommandOptionList():
     def __init__(self, optionNames: list):
         self.optionNames = optionNames
 
+    def __str__(self):
+        return self.optionNames[0]
+    def __repr__(self):
+        return self.optionNames[0]
+
 class CommandParameter():
     def __init__(self, name: str, options: list):
         self.name = name
         self.options = options
+
+    def __str__(self):
+        return f'<{self.name}> -> [{", ".join([str(option) for option in self.options])}]'
+    
 
 class CommandParameterList():
     def __init__(self, parameters: list):
@@ -28,7 +37,10 @@ class Command:
     def __str__(self):
         return ' '.join([self.name] + [f'<{parameter.name}>' for parameter in self.parameter_list])
     def __repr__(self):
-        return ' '.join([self.name] + [f'<{parameter.name}>' for parameter in self.parameter_list])
+        output = ' '.join([self.name] + [f'<{parameter.name}>' for parameter in self.parameter_list])
+        for parameter in self.parameter_list:
+            output += f'\n  {str(parameter)}'
+        return output
 
 class CommandList:
     def __init__(self, commands: list):
@@ -41,6 +53,8 @@ class CommandList:
 
     def __str__(self):
         return '\n'.join([str(command) for command in self.commands])
+    def __repr__(self):
+        return '\n'.join([repr(command) for command in self.commands])
 
 def signal_handler(sig, frame):
     exit()
@@ -51,12 +65,6 @@ def main():
     commands = CommandList([
         Command('orbit', CommandParameterList([
             CommandParameter('type', [
-                CommandOptionList(['low', 'leo']),
-                CommandOptionList(['med', 'medium', 'meo']),
-                CommandOptionList(['geo', 'geostationary', 'gso']),
-                CommandOptionList(['pol', 'polar', 'gso'])
-            ]),
-            CommandParameter('help', [
                 CommandOptionList(['low', 'leo']),
                 CommandOptionList(['med', 'medium', 'meo']),
                 CommandOptionList(['geo', 'geostationary', 'gso']),
