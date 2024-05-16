@@ -1,23 +1,46 @@
 from signal import signal, SIGINT
 from sys import stdout, exit
 import os
+from abc import ABC, abstractmethod
 
 
-def orbit(type):
-    match type:
-        case 'low' | 'leo':
-            print('Set orbit to low orbit')
-        case 'med' | 'medium' | 'meo':
-             print('Set orbit to medium orbit')
-        case 'geo' | 'geostationary' | 'gso':
-            print('Set orbit to a geostationary orbit')
-        case 'pol' | 'polar' | 'gso':
-            print('Set orbit to polar')
-        case _:
-            print(f'{type} is not a valid orbit type')
-            return False
-    return True
+class CommandOptionList():
+    def __init__(self, optionNames: list):
+        self.optionNames = optionNames
 
+class CommandParameter():
+    def __init__(self, name: str, options: list):
+        self.name = name
+        self.options = options
+
+class CommandParameterList():
+    def __init__(self, parameters: list):
+        self.parameters = parameters
+
+    def __iter__(self):
+        return iter(self.parameters)
+
+class Command:
+    def __init__(self, name: str, parameter_list: CommandParameterList):
+        self.name = name
+        self.parameter_list = parameter_list
+
+    def __str__(self):
+        return ' '.join([self.name] + [f'<{parameter.name}>' for parameter in self.parameter_list])
+    def __repr__(self):
+        return ' '.join([self.name] + [f'<{parameter.name}>' for parameter in self.parameter_list])
+
+class CommandList:
+    def __init__(self, commands: list):
+        self.commands = commands
+
+    def __getitem__(self, i):
+        return self.commands[i]
+    def __iter__(self):
+        return iter(self.commands)
+
+    def __str__(self):
+        return '\n'.join([str(command) for command in self.commands])
 
 def signal_handler(sig, frame):
     exit()
@@ -25,31 +48,32 @@ def signal_handler(sig, frame):
 def main():
     signal(SIGINT, signal_handler)
 
-    while True:
-        command = input().lower().split()
-        match command[0]:
-            case 'orbit':
-                if len(command) == 2:
-                    orbit(command[1])
-                elif len(command) > 2:
-                    print(f'Too many parameters were given')
-                else:
-                    print(f'\'{command[0]}\' command requires a type')
-            case 'warp':
-                pass
-            case 'land':
-                pass
-            case 'dock':
-                pass
-            
-            case 'load':
-                pass
-            case 'save':
-                pass
-            case 'exit':
-                pass
-            case 'help':
-                pass
+    commands = CommandList([
+        Command('orbit', CommandParameterList([
+            CommandParameter('type', [
+                CommandOptionList(['low', 'leo']),
+                CommandOptionList(['med', 'medium', 'meo']),
+                CommandOptionList(['geo', 'geostationary', 'gso']),
+                CommandOptionList(['pol', 'polar', 'gso'])
+            ]),
+            CommandParameter('help', [
+                CommandOptionList(['low', 'leo']),
+                CommandOptionList(['med', 'medium', 'meo']),
+                CommandOptionList(['geo', 'geostationary', 'gso']),
+                CommandOptionList(['pol', 'polar', 'gso'])
+            ])
+        ])),
+        Command('dock', CommandParameterList([
+            CommandParameter('location', [
+                CommandOptionList(['low', 'leo']),
+                CommandOptionList(['med', 'medium', 'meo']),
+                CommandOptionList(['geo', 'geostationary', 'gso']),
+                CommandOptionList(['pol', 'polar', 'gso'])
+            ])
+        ]))
+    ])
+    print(commands)
+
 
 if __name__ == '__main__':
     main()
