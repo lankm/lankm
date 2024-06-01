@@ -37,7 +37,7 @@ def main():
     while running:
         try:
             global history
-            history += input() + '\n'
+            history += "> "+input("> ") + '\n'
         except EOFError as e:
             pass
 

@@ -92,6 +92,11 @@ def create_command_list() -> CommandList:
         Command('warp', CommandParameterList([
             CommandParameter('location', [
                 CommandOptionList(['station'])
+            ]),
+            CommandParameter('speed', [
+                CommandOptionList(['slow']),
+                CommandOptionList(['med']),
+                CommandOptionList(['fast'])
             ])
         ])),
         Command('load', CommandParameterList([
