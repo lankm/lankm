@@ -9,21 +9,23 @@ fun primitives() {
 
     # numeric types
     int<128>[3] pos = [0,0,0];  # int<128>[3] pos = [0,0,0];
-    uint i = 0;                 # uint<32>[1] = [0];
-    flt<64> total = 12.7;     # flt<64>[1] = [12.7];
+    whl i = 0;                  # whl<32>[1] = [0];
+    flt<64> total = 12.7;       # flt<64>[1] = [12.7];
 
-    # bool is aliased to uint<1>[1]
-    # char is aliased to uint<8>[1]
+    # bit is aliased to whl<1>[1]
+    # chr is aliased to whl<8>[1]
 
-    # int    defualts to int<32>[1]
-    # uint   defaults to uint<32>[1]
-    # flt  defaults to float<32>[1]
+    # int  defualts to int<32>[1]
+    # whl  defaults to whl<32>[1]
+    # flt  defaults to flt<32>[1]
 }
 
 fun primitives+() {
     # character types
     utf ch = 'b';               # utf<8>[1] = ['a'];
     str<utf<8>> = "Hello world";
+
+    # str  defaults to str<utf<8>>[1]
 }
 
 fun structures() {
@@ -33,20 +35,21 @@ fun structures() {
     union
 }
 
+# determine way to differenciate instance vs static variabels
 class Person {
     pub str first_name;
     pub str last_name;
-    pri uint ssn;
+    pri whl ssn;
 
-    pub con() {
+    pub con(this: Person, fname: string, lname: string) {
         this.first_name = "John";
-        this.last_name = "Smith"
+        this.last_name = "Smith";
     }
-    # functions are either pure (only returns a value, no side effects) or void (no return value, only causes side effects)
-    pub fun full_name(): str { # Pure. instance functions are constant
-        return str.concat([this.first_name, this.last_name]);
+
+    pub fun full_name(this: Person): str { # pure function
+        str.concat([this.first_name, this.last_name])
     }
-    pub fun set_first_name(new_value: string) { # Impure
+    pub fun set_first_name(this: Person, new_value: string) { # void function
         this.first_name = new_value;
     }
 }
