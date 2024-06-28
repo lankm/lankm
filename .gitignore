@@ -1,5 +1,6 @@
 *.exe
 *.o
+*.out
 .vscode/
 __pycache__/
 node_modules
