@@ -15,3 +15,7 @@ I love implementing and optimizing algorithms along with backend systems, but a 
 - Discovered quick collision prediction between moving spheres
 
   Two objects moving through space have an initial position and a velocity. this information can be used to parameterized the paths and calculate the distance over time between the points. By solving for when the distance between objects is equal to the sum of their radii, a quadratic solution appears. The sign of the discriminant determines whether the objects will collide. If a collision will occur, the quadratic formula can be used. The square root in the formula is computationally expensive and can not be avoided.
+
+- Transfered development to a personal ubuntu server
+
+  I converted my college laptop into an ubuntu server and have started developing off of it through ssh. Additionally I registered a domain for it at luna-terminus.dev. This is a good experince for me to get used to working through the command line and to know many linux commands and standards.
