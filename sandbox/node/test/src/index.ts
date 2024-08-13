@@ -1,4 +1,4 @@
-let system = {
+const system = {
     "sol": {
         body: { 
             mass: 1988400e+24,
@@ -118,35 +118,67 @@ let system = {
     },
 };
 
-console.log('Sol');
-console.log('├╴Mercury');
-console.log('├╴Venus');
-console.log('├╴Terra');
-console.log('│ └╴Luna');
-console.log('├╴Mars');
-console.log('│ ├╴Phobos');
-console.log('│ └╴Deimos');
-console.log('├╴Jupiter');
-console.log('│ ├╴Ganymede');
-console.log('│ ├╴Callisto');
-console.log('│ ├╴Io');
-console.log('│ └╴Europa');
-console.log('├╴Saturn');
-console.log('│ ├╴Titan');
-console.log('│ ├╴Rhea');
-console.log('│ ├╴Iapetus');
-console.log('│ ├╴Dione');
-console.log('│ ├╴Mimas');
-console.log('│ ├╴Tethys');
-console.log('│ └╴Enceladus');
-console.log('├╴Uranus');
-console.log('│ ├╴Titania');
-console.log('│ ├╴Oberon');
-console.log('│ ├╴Umbriel');
-console.log('│ ├╴Ariel');
-console.log('│ └╴Miranda');
-console.log('└╴Neptune');
-console.log('  └╴Triton');
+const printSystem = () => {
+    const heavy = [[[[' ','╻'],['╸','┓']],[['╹','┃'],['┛','┫']]],[[['╺','┏'],['━','┳']],[['┗','┣'],['┻','╋']]]];
+    const light = [[[[' ','╷'],['╴','┐']],[['╵','│'],['┘','┤']]],[[['╶','┌'],['─','┬']],[['└','├'],['┴','┼']]]];
 
-let heavy = [[[[' ','╻'],['╸','┓']],[['╹','┃'],['┛','┫']]],[[['╺','┏'],['━','┳']],[['┗','┣'],['┻','╋']]]];
-let light = [[[[' ','╷'],['╴','┐']],[['╵','│'],['┘','┤']]],[[['╶','┌'],['─','┬']],[['└','├'],['┴','┼']]]];
+    console.log('Sol');
+    console.log('├╴Mercury');
+    console.log('├╴Venus');
+    console.log('├╴Terra');
+    console.log('│ └╴Luna');
+    console.log('├╴Mars');
+    console.log('│ ├╴Phobos');
+    console.log('│ └╴Deimos');
+    console.log('├╴Jupiter');
+    console.log('│ ├╴Ganymede');
+    console.log('│ ├╴Callisto');
+    console.log('│ ├╴Io');
+    console.log('│ └╴Europa');
+    console.log('├╴Saturn');
+    console.log('│ ├╴Titan');
+    console.log('│ ├╴Rhea');
+    console.log('│ ├╴Iapetus');
+    console.log('│ ├╴Dione');
+    console.log('│ ├╴Mimas');
+    console.log('│ ├╴Tethys');
+    console.log('│ └╴Enceladus');
+    console.log('├╴Uranus');
+    console.log('│ ├╴Titania');
+    console.log('│ ├╴Oberon');
+    console.log('│ ├╴Umbriel');
+    console.log('│ ├╴Ariel');
+    console.log('│ └╴Miranda');
+    console.log('└╴Neptune');
+    console.log('  └╴Triton');
+}
+
+const printOptions = () => {
+    console.log('1. Galexy map');
+    console.log('2. System map');
+    console.log('3. Route');
+    console.log('4. Scan');
+    console.log('5. Dock');
+}
+
+import * as process from 'process';
+
+class TerminalManager {
+    protected static height: number;
+    protected static width: number;
+    
+    static start() {
+        const { width, height } = this.getTerminalSize();
+        console.log(width);
+    }
+    static stop() {
+
+    }
+    private static getTerminalSize() {
+        const width = process.stdout.columns;
+        const height = process.stdout.rows;
+        return { width, height };
+    }
+}
+
+TerminalManager.start();

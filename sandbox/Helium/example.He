@@ -1,0 +1,34 @@
+# This is a comment. It must have a pound sign at the begining and end #
+#
+  Development notes
+  - arrays must be of a single type. accessed by index
+  - sets must be of a single type. accessed by name
+  - tuples can contain multiple types. accessed by index
+  - objects can contain multiple types. accessed by name
+
+  Types
+  Primitives
+  - int: integer
+    - bit: bool. int of 1 bit
+    - chr: character. int of 1 byte
+  - whl: whole number
+  - flt: floating point number
+
+  Non-primitives
+  - str: string
+  - utf: Unicode Transformation Format
+
+  Datastructures
+  - arr: array
+    - map: map. array of kvp
+    - gph: graph. set of vrt
+  - set: set
+  - tup: tuple
+  - obj: object
+  - kvp: key value pair
+  - vrt: vertex. array of vrt
+
+  Paradigm
+  - fun: function. kvp of a tuple of types to a statement
+#
+

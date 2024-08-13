@@ -1,23 +1,33 @@
-# personal notes
-# - try to make all modifiers three leters long
-#   ex: pub int variable_name = ...
+Personal notes
+- # think about integer size an how mathmatical operations change it. int<8>*int<8>=int<16> #
+
+# ============================================================================ #
+# ==================================== #
+# ================ #
+# ====== #
+
+class fnct {
+    # params #
+    # operation #
+}
 
 from stdlib import stdout as out
+cnst params = [ cnst argc: int, cnst argv: ptr<str>[] ];
+main = [ cnst argc: int, cnst argv: ptr<str>[] ] {
 
-fun primitives() {
-    # primitive types are those which always have a constant size at compile time
+    # types #
+    mutl pos = [0,0,0];              # pos: int<64>[3] = [0,0,0]; #
+    mutl i = 0;                      # i: int<32> = 0; #
+    mutl total = 12.7;               # total: flt<64> = 12.7; #
+    cnst pi = 3.14159265;            # pi: flt<64> = 3.14159265; #
+    cnst twelve = 12;                # twelve: int<32> = 12; #
+    mutl node = ptr(42);             # node: ptr<int<32>> = ptr(42); #
+    cnst input = "Hello, world";     # input: str<utf<8>> = "Hello, world"; #
+    cnst c = 'c';                    # c: utf<8> = 'c';
 
-    # numeric types
-    int<128>[3] pos = [0,0,0];  # int<128>[3] pos = [0,0,0];
-    whl i = 0;                  # whl<32>[1] = [0];
-    flt<64> total = 12.7;       # flt<64>[1] = [12.7];
+    if () {
 
-    # bit is aliased to whl<1>[1]
-    # chr is aliased to whl<8>[1]
-
-    # int  defualts to int<32>[1]
-    # whl  defaults to whl<32>[1]
-    # flt  defaults to flt<32>[1]
+    }
 }
 
 fun primitives+() {
@@ -35,22 +45,24 @@ fun structures() {
     union
 }
 
-# determine way to differenciate instance vs static variabels
 class Person {
-    pub str first_name;
-    pub str last_name;
-    pri whl ssn;
+    publ cnst str  first_name;
+    publ vari str  last_name;
+    priv cnst str  ssn;
+    publ cnst chr  middle_initial;
+    publ vari bit  is_alive;
+    publ cnst int  time_of_birth
 
-    pub con(this: Person, fname: string, lname: string) {
+    publ init(fname: string, lname: string) {
         this.first_name = "John";
         this.last_name = "Smith";
     }
 
-    pub fun full_name(this: Person): str { # pure function
-        str.concat([this.first_name, this.last_name])
+    publ fnct marry(cnst str  new_last_name) {
+        this.last_name = new_last_name;
     }
-    pub fun set_first_name(this: Person, new_value: string) { # void function
-        this.first_name = new_value;
+    publ pure get_age(cnst int  current_time): int {
+        return current_time - this.time_of_birth;
     }
 }
 
