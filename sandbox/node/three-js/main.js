@@ -1,6 +1,7 @@
 import "./style.css";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { FlyControls } from 'three/addons/controls/FlyControls.js';
 
 const colors = {
   black: new THREE.Color(0x000000),
@@ -19,8 +20,8 @@ function init() {
   const scene = new THREE.Scene();
 
   // camera
-  const camera = new THREE.PerspectiveCamera(50, vw / vh, 0.1, 1000);
-  camera.position.set(0, 20, 100);
+  const camera = new THREE.OrthographicCamera( vw / - 2, vw / 2, vh / 2, vh / - 2);
+  camera.position.set(0, 1000, 1000);
 
   // render
   const renderer = new THREE.WebGLRenderer();
@@ -31,14 +32,16 @@ function init() {
   // resize
   window.addEventListener("resize", () => {
     [vw, vh] = [window.innerWidth, window.innerHeight];
-    camera.aspect = vw / vh;
+    camera.left   = vw / -2;
+    camera.right  = vw / 2;
+    camera.top    = vh / 2;
+    camera.bottom = vh / -2;
     camera.updateProjectionMatrix();
     renderer.setSize(vw, vh);
   });
 
   // orbit movement
   const controls = new OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true;
 
   return [scene, camera, renderer, controls];
 }
@@ -46,30 +49,33 @@ function init() {
 const [scene, camera, renderer, controls] = init();
 
 // mesh
-const geometry = new THREE.BoxGeometry(10, 10, 10);
+const geometry = new THREE.SphereGeometry(10)
 const material = new THREE.MeshStandardMaterial({
-  color: colors.red,
+  color: colors.yellow,
 });
 const mesh = new THREE.Mesh(geometry, material);
 scene.add(mesh);
 
-const lineMaterial = new THREE.LineBasicMaterial({ color: colors.white });
-const points = [];
-points.push(new THREE.Vector3(-10, 0, 0));
-points.push(new THREE.Vector3(0, 10, 0));
-points.push(new THREE.Vector3(10, 0, 0));
-const lineGeometry = new THREE.BufferGeometry().setFromPoints(points);
-const line = new THREE.Line(lineGeometry, lineMaterial);
-scene.add(line);
+const curve3 = new THREE.EllipseCurve(
+  0,
+  75, // ax, aY
+  75,
+  150, // xRadius, yRadius
+);
+
+const points3 = curve3.getPoints(50);
+const geometry3 = new THREE.BufferGeometry().setFromPoints(points3);
+const material3 = new THREE.LineBasicMaterial({ color: colors.white });
+
+// Create the final object to add to the scene
+const ellipse = new THREE.Line(geometry3, material3);
+scene.add(ellipse);
 
 // light
-const light = new THREE.PointLight(0xffffff, 100, 100);
-light.position.set(0, 10, 10);
+const light = new THREE.PointLight(0xffffff, 10000, 1000);
+light.position.set(0, 100, 100);
 scene.add(light);
 
-// grid
-const gridHelper = new THREE.GridHelper(100, 100);
-scene.add(gridHelper);
 
 const clock = new THREE.Clock();
 function animate() {
