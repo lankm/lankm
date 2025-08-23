@@ -1,6 +1,5 @@
 <?php
 include("tags.php");
-include("constants.php");
 
 class AbstractPage {
     private string $lang;

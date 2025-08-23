@@ -2,7 +2,7 @@ import numpy as np
 
 class Quaternion:
     def mul(a, b):
-        # 16 mul, 12 add
+        # 16 mul, 12 add, 3 serial ops
         result = np.zeros(4)
         
         result[0] = a[0]*b[0] - a[1]*b[1] - a[2]*b[2] - a[3]*b[3]
@@ -13,7 +13,7 @@ class Quaternion:
         return result
 
     def rotate(q, p):
-        # 19 mul, 21 add, 3 bitshift
+        # 19 mul, 21 add, 3 bitshift, 6 serial ops
         result = np.zeros(3)
 
         q00 = q[0]*q[0]
@@ -26,9 +26,9 @@ class Quaternion:
         q22 = q[2]*q[2]
         q23 = q[2]*q[3]
         q33 = q[3]*q[3]
-        result[0] = p[0]*(+ q[0]*q[0] + q[1]*q[1] - q[2]*q[2] - q[3]*q[3]) + 2*(p[1]*(q[1]*q[2] - q[0]*q[3]) + p[2]*(q[0]*q[2] + q[1]*q[3]))
-        result[1] = p[1]*(+ q[0]*q[0] - q[1]*q[1] + q[2]*q[2] - q[3]*q[3]) + 2*(p[0]*(q[1]*q[2] + q[0]*q[3]) + p[2]*(q[2]*q[3] - q[0]*q[1]))
-        result[2] = p[2]*(+ q[0]*q[0] - q[1]*q[1] - q[2]*q[2] + q[3]*q[3]) + 2*(p[0]*(q[1]*q[3] - q[0]*q[2]) + p[1]*(q[0]*q[1] + q[2]*q[3]))
+        result[0] = p[0]*(+ q00 + q11 - q22 - q33) + 2*(p[1]*(q12 - q03) + p[2]*(q02 + q13))
+        result[1] = p[1]*(+ q00 - q11 + q22 - q33) + 2*(p[0]*(q12 + q03) + p[2]*(q23 - q01))
+        result[2] = p[2]*(+ q00 - q11 - q22 + q33) + 2*(p[0]*(q13 - q02) + p[1]*(q01 + q23))
 
         return result
 
